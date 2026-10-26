@@ -180,17 +180,24 @@ interface TableHeadProps extends AriaColumnProps, Omit<ThHTMLAttributes<HTMLTabl
     label?: string;
     /** Help text shown in a tooltip when hovering the help icon next to the heading. */
     tooltip?: string;
+    /** Controls the horizontal padding of the header cell. Falls back to the size inherited from the table. */
+    size?: "sm" | "md";
 }
 
-const TableHead = ({ className, tooltip, label, children, ...props }: TableHeadProps) => {
+const TableHead = ({ className, tooltip, label, children, size: sizeProp, ...props }: TableHeadProps) => {
+    const context = useContext(TableContext);
     const { selectionBehavior } = useTableOptions();
+
+    const size = sizeProp ?? context.size;
 
     return (
         <AriaColumn
             {...props}
             className={(state) =>
                 cx(
-                    "relative p-0 px-6 py-2 outline-hidden focus-visible:z-1 focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-bg-primary focus-visible:ring-inset",
+                    "relative p-0 py-2 outline-hidden focus-visible:z-1 focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-bg-primary focus-visible:ring-inset",
+                    size === "sm" && "px-5",
+                    size === "md" && "px-6",
                     selectionBehavior === "toggle" && "nth-2:pl-3",
                     state.allowsSorting && "cursor-pointer",
                     typeof className === "function" ? className(state) : className,
